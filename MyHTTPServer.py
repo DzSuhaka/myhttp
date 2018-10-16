@@ -35,7 +35,8 @@ class MyHTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         except os.error:
             self.send_error(404, "No permission to list directory")
             return None
-        list.sort(key=lambda a: a.lower())
+        list.sort(key=lambda a: (-os.path.isdir(path+a), a))
+        list = ([os.pardir] if path.rstrip('/') != os.getcwd() else []) + [os.curdir] + list
         f = StringIO()
         displaypath = cgi.escape(urllib.unquote(self.path))
         f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
